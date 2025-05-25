@@ -218,12 +218,15 @@ pub fn create_output_path(
     out_link: Option<impl AsRef<std::path::Path>>,
     prefix: &str,
 ) -> Result<Box<dyn crate::util::MaybeTempPath>> {
-    let out_path: Box<dyn crate::util::MaybeTempPath> = match out_link {
-        Some(ref p) => Box::new(std::path::PathBuf::from(p.as_ref())),
-        None => Box::new({
-            let dir = tempfile::Builder::new().prefix(prefix).tempdir()?;
-            (dir.as_ref().join("result"), dir)
-        }),
+    let out_path: Box<dyn crate::util::MaybeTempPath> = match self.common.out_link {
+        Some(ref p) => Box::new(p.clone()),
+        None => match variant {
+            BuildVm | Build => Box::new(PathBuf::from("result")),
+            _ => Box::new({
+                let dir = tempfile::Builder::new().prefix("nh-os").tempdir()?;
+                (dir.as_ref().join("result"), dir)
+            }),
+        },
     };
 
     Ok(out_path)

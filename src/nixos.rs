@@ -155,6 +155,7 @@ impl OsRebuildArgs {
             },
         };
 
+        //
         // Configure and build the NixOS configuration
         let target_profile = platform::handle_rebuild_workflow(
             installable,
